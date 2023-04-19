@@ -1,0 +1,44 @@
+; Circular Delay for FV-1
+
+; Register Definitions
+reg0    EQU 0   ; Delay time
+reg1    EQU 1   ; Feedback
+reg2    EQU 2   ; Wet mix
+
+; Memory Allocation
+mem delayL EQU $00 ; Left channel delay buffer
+mem delayR EQU $80 ; Right channel delay buffer
+
+; Code
+ORG 0
+    ; Set up delay time
+    rdax POT0, 1.0
+    mulf reg0, 1.0
+    sof 0.01, 0.0 ; Minimum delay time 0.01
+    log 1.0, 0.0
+    exp 1.0, 0.0
+    writedelay delayL, 0.0 ; Set delay time for left channel
+    writedelay delayR, 0.0 ; Set delay time for right channel
+
+    ; Process left channel
+    rdax ADCL, 1.0
+    readelay delayL, 1.0 ; Read from delay buffer
+    mulx reg1 ; Multiply by feedback
+    wra delayL, 1.0 ; Write to delay buffer
+    mulx reg2 ; Multiply by wet mix
+    rda ADCL, 1.0 ; Add dry signal
+    rmpa 0.999 ; Apply volume adjustment
+    wra DACL, 1.0 ; Write to left output
+
+    ; Process right channel
+    rdax ADCR, 1.0
+    readelay delayR, 1.0 ; Read from delay buffer
+    mulx reg1 ; Multiply by feedback
+    wra delayR, 1.0 ; Write to delay buffer
+    mulx reg2 ; Multiply by wet mix
+    rda ADCR, 1.0 ; Add dry signal
+    rmpa 0.999 ; Apply volume adjustment
+    wra DACR, 1.0 ; Write to right output
+
+    ; Jump to start
+    jmp 0x0000
