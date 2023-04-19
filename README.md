@@ -10,7 +10,7 @@ Please note that this example uses the blocking input function for demonstration
 
 # Pedal Implementation
 Work-In-Progress but I had an idea to put inside FV-1. Constratint would be the memory and how extensive the DSP resource would handle extended delay time.
-Check `CD.spn`
+Check `CD_SpinASM.spn`
 
 # Resources
 `https://electric-canary.com/fv1start.html`
